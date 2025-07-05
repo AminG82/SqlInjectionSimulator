@@ -30,13 +30,23 @@ namespace SqlInjectionSimulator
             safeSearchCommand.CommandType = CommandType.Text;
             safeSearchCommand.Parameters.AddWithValue("@input", $"%{input}%"); // Safe parameterized query
 
+            SqlCommand storedProcedureSearch = new SqlCommand("sp_searchProducts", connection);
+            storedProcedureSearch.CommandType = CommandType.StoredProcedure;
+            storedProcedureSearch.Parameters.AddWithValue("@Name", input); // Safe parameterized query for stored procedure
+
+
             connection.Open();
 
             //SqlDataReader reader = searchCommand.ExecuteReader();
-            SqlDataReader SafeReader = safeSearchCommand.ExecuteReader();
-            while (SafeReader.Read())
+            //SqlDataReader SafeReader = safeSearchCommand.ExecuteReader();
+            SqlDataReader storedProcedureReader = storedProcedureSearch.ExecuteReader();
+            while (storedProcedureReader.Read())
             {
-                Console.WriteLine($"Product: {SafeReader["ProductName"]}, Category: {SafeReader["ProductCategory"]}");
+                Console.WriteLine($"""
+                    Product: {storedProcedureReader["ProductName"]}, 
+                    Category: {storedProcedureReader["ProductCategory"]}
+                    """);
+                    
             }
             connection.Close();
 

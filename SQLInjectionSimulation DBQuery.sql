@@ -37,3 +37,9 @@ go
 
 SELECT * FROM Products
 SELECT * FROM Users
+
+go
+CREATE PROCEDURE sp_searchProducts 
+@Name NVARCHAR(50)
+as
+SELECT * FROM Products WHERE ProductName LIKE '%'+ @Name + '%' ;
