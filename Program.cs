@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace SqlInjectionSimulator
 {
@@ -7,7 +8,7 @@ namespace SqlInjectionSimulator
         static void Main(string[] args)
         {
             Console.Write("Search in producs : ");
-            string input = Console.ReadLine();
+            string ?input = Console.ReadLine();
 
 
             // Simulate a SQL injection vulnerability
@@ -18,16 +19,24 @@ namespace SqlInjectionSimulator
             SqlConnection connection = new SqlConnection(connectionString);
 
             SqlCommand searchCommand = new SqlCommand($"""
-                SELECT * FROM Products WHERE ProductName LIKE '%{input}%'
+                SELECT * FROM Products WHERE ProductName LIKE '%{input}%'       
+                """, connection);                                         //Search Command with risk of injection
+
+
+            SqlCommand safeSearchCommand = new SqlCommand("""
+                SELECT * FROM Products WHERE ProductName LIKE @input       
                 """, connection);
 
+            safeSearchCommand.CommandType = CommandType.Text;
+            safeSearchCommand.Parameters.AddWithValue("@input", $"%{input}%"); // Safe parameterized query
 
             connection.Open();
 
-            SqlDataReader reader = searchCommand.ExecuteReader();
-            while (reader.Read())
+            //SqlDataReader reader = searchCommand.ExecuteReader();
+            SqlDataReader SafeReader = safeSearchCommand.ExecuteReader();
+            while (SafeReader.Read())
             {
-                Console.WriteLine($"Product: {reader["ProductName"]}, Category: {reader["ProductCategory"]}");
+                Console.WriteLine($"Product: {SafeReader["ProductName"]}, Category: {SafeReader["ProductCategory"]}");
             }
             connection.Close();
 
