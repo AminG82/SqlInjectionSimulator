@@ -30,6 +30,12 @@ namespace SqlInjectionSimulator
                 Console.WriteLine($"Product: {reader["ProductName"]}, Category: {reader["ProductCategory"]}");
             }
             connection.Close();
+
+
+            // Note: This code is intentionally vulnerable to SQL injection for educational purposes.
+            // In a real application, you should use parameterized queries to prevent SQL injection attacks.
+            // what if user input is : sam'; DELETE FROM Users ; --'
+            // The above input would result in a SQL command that deletes all users from the Users table.
         }
     }
 }
