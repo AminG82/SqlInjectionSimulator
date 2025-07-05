@@ -17,9 +17,18 @@ namespace SqlInjectionSimulator
             """;
             SqlConnection connection = new SqlConnection(connectionString);
 
+            SqlCommand searchCommand = new SqlCommand($"""
+                SELECT * FROM Products WHERE ProductName LIKE '%{input}%'
+                """, connection);
+
 
             connection.Open();
 
+            SqlDataReader reader = searchCommand.ExecuteReader();
+            while (reader.Read())
+            {
+                Console.WriteLine($"Product: {reader["ProductName"]}, Category: {reader["ProductCategory"]}");
+            }
             connection.Close();
         }
     }
