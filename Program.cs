@@ -1,4 +1,6 @@
-﻿namespace SqlInjectionSimulator
+﻿using Microsoft.Data.SqlClient;
+
+namespace SqlInjectionSimulator
 {
     internal class Program
     {
@@ -6,6 +8,19 @@
         {
             Console.Write("Search in producs : ");
             string input = Console.ReadLine();
+
+
+            // Simulate a SQL injection vulnerability
+            string connectionString = """
+            Data Source = .; Initial Catalog = ShopTestDB ; User ID = sa ; Password = amin5123;
+            Encrypt=False;
+            """;
+            SqlConnection connection = new SqlConnection(connectionString);
+
+
+            connection.Open();
+
+            connection.Close();
         }
     }
 }
